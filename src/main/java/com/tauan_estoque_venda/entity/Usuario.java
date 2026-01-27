@@ -7,10 +7,11 @@ import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Usuario extends BaseEntity {
-
+    @Column(name = "nome")
     private String nome;
-    @Column(unique = true)
+    @Column(name = "email",unique = true)
     private String email;
+    @Column(name = "senha")
     private String senha;
     @ManyToOne
     @JoinColumn(name = "permissao_id")
