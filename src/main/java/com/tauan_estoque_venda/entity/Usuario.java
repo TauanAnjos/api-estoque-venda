@@ -9,6 +9,7 @@ import jakarta.persistence.ManyToOne;
 public class Usuario extends BaseEntity {
 
     private String nome;
+    @Column(unique = true)
     private String email;
     private String senha;
     @ManyToOne
