@@ -1,7 +1,9 @@
 package com.tauan_estoque_venda.controller;
 
+import com.tauan_estoque_venda.dtos.PedidoVendaDTO;
 import com.tauan_estoque_venda.entity.Venda;
 import com.tauan_estoque_venda.repository.VendaRepository;
+import com.tauan_estoque_venda.service.VendaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,11 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/venda")
 public class VendaController {
     @Autowired
-    private VendaRepository vendaRepository;
+    private VendaService vendaService;
 
     @PostMapping
-    public ResponseEntity<Void> cadastrarVenda(@RequestBody Venda venda){
-        vendaRepository.save(venda);
+    public ResponseEntity<Void> cadastrarVenda(@RequestBody PedidoVendaDTO pedidoVendaDTO){
+        vendaService.realizarVenda(pedidoVendaDTO);
         return ResponseEntity.ok().build();
     }
 }
