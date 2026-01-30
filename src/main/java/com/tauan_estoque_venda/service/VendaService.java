@@ -33,7 +33,7 @@ public class VendaService {
             vendaRepository.save(venda);
 
             for (ItemPedidoDTO item : pedidoVendaDTO.itens()) {
-                Estoque estoque = estoqueRepository.findById(item.produtoId()).orElseThrow(() -> new RuntimeException("Produto não encontrado."));
+                Estoque estoque = estoqueRepository.findByProdutoId(item.produtoId()).orElseThrow(() -> new RuntimeException("Produto não encontrado."));
                 if (estoque.getQuantidade() < item.quantidade()){
                     throw new RuntimeException("Quantidade insuficiente no estoque.");
                 }
