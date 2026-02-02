@@ -3,6 +3,7 @@ package com.tauan_estoque_venda.service;
 import com.tauan_estoque_venda.dtos.ItemPedidoDTO;
 import com.tauan_estoque_venda.dtos.PedidoVendaDTO;
 import com.tauan_estoque_venda.entity.*;
+import com.tauan_estoque_venda.exception.UserNotFoundException;
 import com.tauan_estoque_venda.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +28,7 @@ public class VendaService {
     public void realizarVenda(PedidoVendaDTO pedidoVendaDTO){
 
 
-        Usuario usuario = usuarioRepository.findById(pedidoVendaDTO.usuarioId()).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        Usuario usuario = usuarioRepository.findById(pedidoVendaDTO.usuarioId()).orElseThrow(() -> new UserNotFoundException("Usuário não encontrado"));
         Venda venda = new Venda(usuario, BigDecimal.ZERO, null);
         vendaRepository.save(venda);
 
