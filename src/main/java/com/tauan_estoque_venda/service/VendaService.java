@@ -13,44 +13,32 @@ import java.math.BigDecimal;
 public class VendaService {
     private VendaRepository vendaRepository;
     private UsuarioRepository usuarioRepository;
-    private EstoqueRepository estoqueRepository;
-    private ProdutoRepository produtoRepository;
-    private ItemVendaRepository itemVendaRepository;
 
-    public VendaService(VendaRepository vendaRepository, UsuarioRepository usuarioRepository, EstoqueRepository estoqueRepository, ProdutoRepository produtoRepository, ItemVendaRepository itemVendaRepository) {
+    private ItemVendaRepository itemVendaRepository;
+    private EstoqueService estoqueService;
+
+    public VendaService(VendaRepository vendaRepository, UsuarioRepository usuarioRepository, ItemVendaRepository itemVendaRepository, EstoqueService estoqueService) {
         this.vendaRepository = vendaRepository;
         this.usuarioRepository = usuarioRepository;
-        this.estoqueRepository = estoqueRepository;
-        this.produtoRepository = produtoRepository;
         this.itemVendaRepository = itemVendaRepository;
+        this.estoqueService = estoqueService;
     }
     @Transactional
     public void realizarVenda(PedidoVendaDTO pedidoVendaDTO){
-        try {
 
-            Usuario usuario = usuarioRepository.findById(pedidoVendaDTO.usuarioId()).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-            Venda venda = new Venda(usuario, BigDecimal.ZERO, null);
-            vendaRepository.save(venda);
 
-            for (ItemPedidoDTO item : pedidoVendaDTO.itens()) {
-                Estoque estoque = estoqueRepository.findByProdutoId(item.produtoId()).orElseThrow(() -> new RuntimeException("Produto não encontrado."));
-                if (estoque.getQuantidade() < item.quantidade()){
-                    throw new RuntimeException("Quantidade insuficiente no estoque.");
-                }
-                int quantidadeSubtraida = estoque.getQuantidade() - item.quantidade();
-                estoque.setQuantidade(quantidadeSubtraida);
-                estoqueRepository.save(estoque);
+        Usuario usuario = usuarioRepository.findById(pedidoVendaDTO.usuarioId()).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        Venda venda = new Venda(usuario, BigDecimal.ZERO, null);
+        vendaRepository.save(venda);
 
-                Produto produto = estoque.getProduto();
-                BigDecimal valorTotal = produto.getValorAtual().multiply(BigDecimal.valueOf(item.quantidade()));
-                ItemVenda itemVenda = new ItemVenda(venda,produto, item.quantidade(), valorTotal);
-                itemVendaRepository.save(itemVenda);
-                venda.setValorTotal(venda.getValorTotal().add(valorTotal));
-            }
-            vendaRepository.save(venda);
+        for (ItemPedidoDTO item : pedidoVendaDTO.itens()) {
 
-        }catch (RuntimeException e){
-            throw new RuntimeException(e.getMessage());
+            Produto produto = estoqueService.atualizarEstoque(item.produtoId(), item.quantidade());
+            BigDecimal valorTotal = produto.getValorAtual().multiply(BigDecimal.valueOf(item.quantidade()));
+            ItemVenda itemVenda = new ItemVenda(venda,produto, item.quantidade(), valorTotal);
+            itemVendaRepository.save(itemVenda);
+            venda.setValorTotal(venda.getValorTotal().add(valorTotal));
         }
+        vendaRepository.save(venda);
     }
 }
