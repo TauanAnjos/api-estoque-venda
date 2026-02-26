@@ -30,7 +30,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configure(httpSecurity))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize.dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
-                        .requestMatchers(HttpMethod.POST).permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.GET).permitAll()
                         .requestMatchers(HttpMethod.PUT).permitAll()
                         .requestMatchers(HttpMethod.DELETE).permitAll()

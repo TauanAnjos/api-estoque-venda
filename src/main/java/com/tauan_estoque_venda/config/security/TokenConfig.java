@@ -14,16 +14,17 @@ import java.util.Optional;
 
 @Component
 public class TokenConfig {
-    @Value("${spring.jwt.secret}")
-    private String secret;
-    Algorithm algorithm = Algorithm.HMAC256(secret);
+    private final Algorithm algorithm;
+
+    public TokenConfig(@Value("${spring.jwt.secret}") String secret) {
+        this.algorithm = Algorithm.HMAC256(secret);
+    }
     public String generateToken(Usuario user){
 
         return JWT.create()
                 .withSubject(user.getEmail())
                 .withClaim("userId", user.getId())
                 .withExpiresAt(Instant.now().plusSeconds(100000))
-                .withExpiresAt(Instant.now())
                 .sign(algorithm);
     }
 
