@@ -24,4 +24,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleInsufficientStockException(InsufficientStockException e){
         return new ResponseEntity<>("Erro: " + e.getMessage(), HttpStatus.NOT_FOUND);
     }
+    @ExceptionHandler(PermissaoNotFoundException.class)
+    public ResponseEntity<String> handleInsufficientStockException(PermissaoNotFoundException e){
+        return new ResponseEntity<>("Erro: " + e.getMessage(), HttpStatus.NOT_FOUND);
+    }
 }
