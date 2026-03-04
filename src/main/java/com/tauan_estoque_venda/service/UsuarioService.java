@@ -10,6 +10,7 @@ import com.tauan_estoque_venda.repository.UsuarioRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -33,5 +34,10 @@ public class UsuarioService {
         newUser.setSenha(passwordEncoder.encode(request.senha()));
         usuarioRepository.save(newUser);
         return new UsuarioResponse(newUser.getNome(), newUser.getEmail(), perm.getId());
+    }
+
+    public List<UsuarioResponse> listarUsuarios(){
+        var users = usuarioRepository.findAll();
+        return users.stream().map(user -> new UsuarioResponse(user.getNome(), user.getEmail(), user.getPermissao().getId())).toList();
     }
 }
