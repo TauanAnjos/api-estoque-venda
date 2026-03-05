@@ -18,6 +18,8 @@ public class Usuario extends BaseEntity implements UserDetails {
     private String email;
     @Column(name = "senha")
     private String senha;
+    @Column(name = "ativo")
+    private boolean ativo;
     @ManyToOne
     @JoinColumn(name = "permissao_id")
     private Permissao permissao;
@@ -62,6 +64,14 @@ public class Usuario extends BaseEntity implements UserDetails {
 
     public void setPermissao(Permissao permissao) {
         this.permissao = permissao;
+    }
+
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
     }
 
     @Override

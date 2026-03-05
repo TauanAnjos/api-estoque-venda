@@ -24,7 +24,12 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.cadastrarUsuario(request));
     }
     @GetMapping
-    public ResponseEntity<List<UsuarioResponse>> listarTodosUsuarios(){
-        return ResponseEntity.status(HttpStatus.OK).body(usuarioService.listarUsuarios());
+    public ResponseEntity<List<UsuarioResponse>> listarTodosUsuariosAtivos(){
+        return ResponseEntity.status(HttpStatus.OK).body(usuarioService.listarUsuariosAtivos());
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deletarUsuario(@PathVariable("id")Integer userId){
+        usuarioService.deletarUsuario(userId);
+        return ResponseEntity.ok().body("Usuário deletado com sucesso");
     }
 }
