@@ -43,7 +43,11 @@ public class UsuarioService {
         return new UsuarioResponse(newUser.getNome(), newUser.getEmail(), perm.getId(), newUser.isAtivo());
     }
     public UsuarioResponse buscarUsuarioId(Integer userId){
+        JWTUserData userLogged = AuthenticatedUser.get();
         Usuario user = usuarioRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("Usuário não encontrado"));
+        if (!userLogged.userId().equals(user.getId().longValue())){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Você não tem permissão para ver esse usuário");
+        }
         Permissao perm = permissaoRepository.findById(user.getPermissao().getId()).orElseThrow(() -> new PermissaoNotFoundException("Permissão não encontrada"));
         return new UsuarioResponse(user.getNome(), user.getEmail(), perm.getId(), user.isAtivo());
     }
@@ -61,7 +65,11 @@ public class UsuarioService {
         usuarioRepository.save(user);
     }
     public UsuarioResponse atualizarUsuario(Integer id, UsuarioUpdatedDTO updated){
+        JWTUserData userLogged = AuthenticatedUser.get();
         Usuario usuarioExistente = usuarioRepository.findById(id).orElseThrow(() -> new UserNotFoundException("Usuário não encontrado"));
+        if (!userLogged.userId().equals(usuarioExistente.getId().longValue())){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Você não tem permissão para alterar esse usuário");
+        }
         if (!passwordEncoder.matches(updated.senhaAntiga(), usuarioExistente.getSenha())){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Senha incorreta");
         }
