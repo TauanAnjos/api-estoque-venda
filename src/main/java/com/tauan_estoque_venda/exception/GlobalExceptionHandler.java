@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.server.ResponseStatusException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -25,7 +26,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>("Erro: " + e.getMessage(), HttpStatus.NOT_FOUND);
     }
     @ExceptionHandler(PermissaoNotFoundException.class)
-    public ResponseEntity<String> handleInsufficientStockException(PermissaoNotFoundException e){
+    public ResponseEntity<String> handlePermissiaoException(PermissaoNotFoundException e){
+        return new ResponseEntity<>("Erro: " + e.getMessage(), HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<String> handlePassordBadRequetException(ResponseStatusException e){
         return new ResponseEntity<>("Erro: " + e.getMessage(), HttpStatus.NOT_FOUND);
     }
 }
