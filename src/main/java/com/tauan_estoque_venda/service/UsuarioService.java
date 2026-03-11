@@ -1,5 +1,7 @@
 package com.tauan_estoque_venda.service;
 
+import com.tauan_estoque_venda.config.security.AuthenticatedUser;
+import com.tauan_estoque_venda.dtos.JWTUserData;
 import com.tauan_estoque_venda.dtos.UsuarioRequest;
 import com.tauan_estoque_venda.dtos.UsuarioResponse;
 import com.tauan_estoque_venda.dtos.UsuarioUpdatedDTO;
@@ -50,7 +52,11 @@ public class UsuarioService {
         return users.stream().filter(Usuario::isAtivo).map(user -> new UsuarioResponse(user.getNome(), user.getEmail(), user.getPermissao().getId(), user.isAtivo())).toList();
     }
     public void deletarUsuario(Integer userId){
+        JWTUserData userLogged = AuthenticatedUser.get();
         Usuario user = usuarioRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("Usuário não encontrado"));
+        if (!userLogged.userId().equals(user.getId().longValue())){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Você não tem permissão para deletar esse usuário");
+        }
         user.setAtivo(false);
         usuarioRepository.save(user);
     }
